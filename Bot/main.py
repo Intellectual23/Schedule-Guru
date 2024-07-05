@@ -1,25 +1,38 @@
-from aiogram import Bot, Dispatcher, F
+from aiogram import Bot, Dispatcher
 from aiogram.types import Message
-from aiogram.filters import Command, CommandStart
-
 import asyncio
 
-bot = Bot(token='7448681372:AAHFmbKEouZb6uihY50EWQr-38AR3zgtxtI')
-dp = Dispatcher()
+from core.handlers.basic import get_start
+from core.settings import settings
+
+token = settings.bots.bot_token
+admin_id = settings.bots.admin_id
 
 
-@dp.message(CommandStart())
-async def cmd_start(message: Message):
-    await message.answer('Привет!')
+async def start_bot(bot: Bot):
+    await bot.send_message(admin_id, text='BOT STARTED')
 
 
-@dp.message(Command('help'))
-async def cmd_help(message: Message):
-    await message.answer('Руководство: ')
+async def stop_bot(bot: Bot):
+    await bot.send_message(admin_id, text='BOT STOPPED')
+
+
+
 
 
 async def main():
-    await dp.start_polling(bot)
+    bot = Bot(token=token)
+    dp = Dispatcher()
+    
+    dp.startup.register(start_bot)
+    dp.shutdown.register(stop_bot)
+    dp.message.register(get_start, bot)
+
+
+    try:
+        await dp.start_polling(bot)
+    finally:
+        await bot.session.close()
 
 
 if __name__ == '__main__':
