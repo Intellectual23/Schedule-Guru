@@ -1,13 +1,12 @@
-import datetime
 from dataclasses import dataclass, field
 from typing import List
 
 
 @dataclass
 class Event:
-    name: str
-    time: datetime.time
-    description: str
+    title: str
+    st_date: str
+    end_date: str
 
 
 @dataclass
