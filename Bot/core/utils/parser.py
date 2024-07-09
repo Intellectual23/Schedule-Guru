@@ -14,7 +14,7 @@ async def read_data(file_name):
             end_date = row[2]
             cur_event = Event(title=title, st_date=st_date, end_date=end_date)
             schedule.events.append(cur_event)
-    await print_data(schedule)
+        print_data(schedule)
 
 
 async def print_data(schedule):
