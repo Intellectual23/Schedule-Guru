@@ -10,14 +10,13 @@ async def db_start():
         "CREATE TABLE IF NOT EXISTS users ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
         "tg_id INTEGER,"
-        "username TEXT, "
-        "tg_group_id INTEGER,"
-        "schedule_id TEXT)"
+        "username TEXT)"
     )
     c.execute(
         "CREATE TABLE IF NOT EXISTS events ("
-        "ev_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "tg_group_id INTEGER, "
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "schedule_name TEXT,"
+        "group_nick TEXT, "
         "title TEXT, "
         "st_date TEXT, "
         "end_date TEXT)"
@@ -32,10 +31,7 @@ async def add_user(user_id, username):
         db.commit()
 
 
-async def set_tg_group_id(user_id, group_id):
-    user = c.execute("SELECT * FROM users WHERE tg_id = ?", (user_id,)).fetchone()
-    if user:
-        c.execute("UPDATE users SET tg_group_id = ? WHERE tg_id = ?", (group_id, user_id))
-        db.commit()
-    else:
-        print(f"User with tg_id {user_id} not found.")
+async def add_event(schedule_name, group_nick, title, st_date, end_date):
+    c.execute("INSERT INTO events (schedule_name, group_nick, title, st_date, end_date) VALUES (?,?,?,?,?)",
+              (schedule_name, group_nick, title, st_date, end_date))
+    db.commit()

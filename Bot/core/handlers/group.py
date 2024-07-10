@@ -5,12 +5,20 @@ from aiogram.filters import CommandStart, Command, ChatMemberUpdatedFilter, JOIN
 from aiogram.enums import chat_type
 from core.settings import settings
 from core.data import database as db
+import asyncio
 
 router = Router()
 
 
 @router.my_chat_member(ChatMemberUpdatedFilter(member_status_changed=JOIN_TRANSITION))
 async def bot_added(event: ChatMemberUpdated):
-    await db.set_tg_group_id(event.from_user.id, event.chat.id)
     print(event.from_user.id, event.chat.id)
+    # find with db event name by group id
     await event.answer(f'Всем привет, я буду обновлять информацию по расписанию мероприятия "{event.chat.title}"')
+
+    async def send_greetings():
+        while True:
+            await event.answer(f'Всем привет из мероприятия "{event.chat.title}"!')
+            await asyncio.sleep(5)
+
+    await asyncio.create_task(send_greetings())

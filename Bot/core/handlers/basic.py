@@ -1,8 +1,10 @@
 from aiogram import Bot, Router, F
 from aiogram.types import Message
 from aiogram.filters import CommandStart, Command
+from aiogram.fsm.context import FSMContext
 from core.utils.parser import read_data
 from core.data import database as db
+from core.utils.states import EventData
 
 router = Router()
 router.message.filter(F.chat.type != 'supergroup')
@@ -15,11 +17,31 @@ async def get_start(message: Message):
 
 
 @router.message(F.document)
-async def get_data(message: Message, bot: Bot):
+async def get_data(message: Message, bot: Bot, state: FSMContext):
     file = await bot.get_file(message.document.file_id)
     await bot.download_file(file.file_path, 'data.csv')
-    await read_data('data.csv')
-    await message.answer(f'Файл получен')
+    await message.answer("Введите название мероприятия:")
+    await state.set_state(EventData.name)
+
+
+@router.message(EventData.name)
+async def get_name(message: Message, state: FSMContext):
+    event_name = message.text
+    await state.update_data(name=event_name)
+    # set event_name to db for each addition of event_case
+    await message.answer("Хорошо, теперь отправьте url Вашего группового чата мероприятия:")
+    await state.set_state(EventData.group_nick)
+
+
+@router.message(EventData.group_nick)
+async def set_nick(message: Message, state: FSMContext):
+    event_group_nick = message.text
+    await state.update_data(group_id=event_group_nick)
+    data = await state.get_data()
+    await read_data('data.csv', data['name'], event_group_nick)
+    await message.answer(
+        f"Файл получен, название мероприятия: {data['name']}\nМожете добавить меня в {event_group_nick}.")
+    await state.clear()
 
 
 @router.message(Command(commands=['help']))
