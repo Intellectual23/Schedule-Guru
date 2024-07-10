@@ -7,7 +7,7 @@ from core.handlers.group import router as group_router
 from core.utils.commands import set_commands
 from core.data import database as db
 from aiogram.enums import ParseMode
-from core.schedule_data import Event, Schedule
+from core.schedule_data import Event
 
 token = settings.bots.bot_token
 admin_id = settings.bots.admin_id

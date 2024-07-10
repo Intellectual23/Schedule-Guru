@@ -17,8 +17,8 @@ async def db_start():
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "schedule_id INTEGER,"
         "title TEXT, "
-        "st_date TEXT, "
-        "end_date TEXT)"
+        "st_date INTEGER, "
+        "end_date INTEGER)"
     )
     c.execute(
         "CREATE TABLE IF NOT EXISTS schedules ("
@@ -53,4 +53,18 @@ async def get_schedule_id(group_url):
     schedule = c.execute("SELECT id FROM schedules WHERE group_url = ?", (group_url,)).fetchone()
     if schedule:
         return schedule[0]
+    return None
+
+
+async def get_schedule(schedule_id):
+    schedule = c.execute("SELECT * FROM events WHERE schedule_id = ?", (schedule_id,)).fetchall()
+    if schedule:
+        return schedule
+    return None
+
+
+async def get_schedule_name(schedule_id):
+    schedule = c.execute("SELECT * FROM schedules WHERE id = ?", (schedule_id,)).fetchone()
+    if schedule:
+        return schedule[1]
     return None
