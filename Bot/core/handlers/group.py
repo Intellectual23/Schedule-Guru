@@ -5,7 +5,7 @@ from aiogram.filters import CommandStart, Command, ChatMemberUpdatedFilter, JOIN
 from aiogram.enums import chat_type
 from core.settings import settings
 from core.data import database as db
-import asyncio
+import asyncio, datetime
 
 router = Router()
 
@@ -18,7 +18,10 @@ async def bot_added(event: ChatMemberUpdated):
 
     async def send_greetings():
         while True:
-            await event.answer(f'Всем привет из мероприятия "{event.chat.title}"!')
+            current_time = datetime.datetime.now()
+            if current_time.minute % 2 == 0:  # Проверяем, является ли количество минут четным
+                time_string = current_time.strftime("%H:%M")
+                await event.answer(f'Текущее время: {time_string}')
             await asyncio.sleep(5)
 
     await asyncio.create_task(send_greetings())

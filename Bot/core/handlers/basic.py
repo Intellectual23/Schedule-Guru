@@ -38,7 +38,9 @@ async def set_nick(message: Message, state: FSMContext):
     event_group_nick = message.text
     await state.update_data(group_id=event_group_nick)
     data = await state.get_data()
-    await read_data('data.csv', data['name'], event_group_nick)
+    await db.add_schedule(data['name'], message.from_user.id, event_group_nick)
+    schedule_id = await db.get_schedule_id(event_group_nick)
+    await read_data('data.csv', schedule_id)
     await message.answer(
         f"Файл получен, название мероприятия: {data['name']}\nМожете добавить меня в {event_group_nick}.")
     await state.clear()
