@@ -11,7 +11,10 @@ router = Router()
 
 @router.my_chat_member(ChatMemberUpdatedFilter(member_status_changed=JOIN_TRANSITION))
 async def bot_added(event: ChatMemberUpdated, bot: Bot):
-    print(event.from_user.id, event.chat.id, event.chat.username)
+    print(
+        f'- new schedule initialized: admin_id: {event.from_user.id}, '
+        f'group_id: {event.chat.id}, '
+        f'chat username: {event.chat.username}')
 
     chat_url = f'https://t.me/{event.chat.username}'
     sch_id = await db.get_schedule_id(chat_url)

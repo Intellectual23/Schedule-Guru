@@ -11,5 +11,4 @@ async def read_data(file_name, schedule_id):
             title = row[0]
             st_date = row[1]
             end_date = row[2]
-            print(schedule_id, title, st_date, end_date)
             await db.add_event(schedule_id, title, st_date, end_date)
