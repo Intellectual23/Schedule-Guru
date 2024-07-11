@@ -13,7 +13,9 @@ router.message.filter(F.chat.type != 'supergroup')
 @router.message(CommandStart())
 async def get_start(message: Message):
     await db.add_user(message.from_user.id, message.from_user.username)
-    await message.answer(f'Привет, {message.from_user.first_name}!')
+    await message.answer(f'Здравствуйте, {message.from_user.first_name}!\n'
+                         f'Отправьте расписание Вашего мероприятия в формате `.csv`.\n'
+                         f'Подробнее о формате расписания можете прочесть в /help.')
 
 
 @router.message(F.document)
@@ -28,7 +30,6 @@ async def get_data(message: Message, bot: Bot, state: FSMContext):
 async def get_name(message: Message, state: FSMContext):
     event_name = message.text
     await state.update_data(name=event_name)
-    # set event_name to db for each addition of event_case
     await message.answer("Хорошо, теперь отправьте url Вашего группового чата мероприятия:")
     await state.set_state(EventData.group_nick)
 
@@ -49,4 +50,9 @@ async def set_nick(message: Message, state: FSMContext):
 @router.message(Command(commands=['help']))
 async def get_help(message: Message):
     await message.answer(
-        f'- Отправьте расписание Вашего мероприятия в формате csv\n- Добавьте меня в группу мероприятия')
+        f'- Инструкция:\nОтправьте расписание Вашего мероприятия в формате csv. '
+        f'Данные должны быть представлены в трех столбцах: <название события>;'
+        f'<время начала события>(timestamp);<время конца события(timestamp)>'
+        f'\n- Введите название мероприятия.'
+        f'\n- Введите url группового чата мероприятия.'
+        f'\n- Добавьте меня в групповой чат мероприятия.')

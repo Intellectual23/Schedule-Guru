@@ -1,13 +1,10 @@
 from aiogram import Bot, Dispatcher
 import asyncio
-import logging
 from core.settings import settings
 from core.handlers.basic import router as basic_router
 from core.handlers.group import router as group_router
 from core.utils.commands import set_commands
 from core.data import database as db
-from aiogram.enums import ParseMode
-from core.schedule_data import Event
 
 token = settings.bots.bot_token
 admin_id = settings.bots.admin_id
@@ -20,7 +17,7 @@ async def on_startup(bot: Bot):
 
 
 async def main():
-    bot = Bot(token=token)
+    bot = Bot(token=token, timeout=10)
     dp = Dispatcher()
     dp.include_routers(
         basic_router,
@@ -34,4 +31,4 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        print('Bot disabled.')
+        print('- bot disabled.')

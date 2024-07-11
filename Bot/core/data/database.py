@@ -68,3 +68,9 @@ async def get_schedule_name(schedule_id):
     if schedule:
         return schedule[1]
     return None
+
+
+async def clear_schedule(schedule_id):
+    c.execute('DELETE FROM events where schedule_id = ?', (schedule_id,))
+    c.execute('DELETE FROM schedules where id = ?', (schedule_id,))
+    db.commit()
